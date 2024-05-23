@@ -6,11 +6,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Callout, Text, TextField } from "@radix-ui/themes";
+import { Button, Callout, Spinner, Text, TextField } from "@radix-ui/themes";
 import { GoIssueOpened } from "react-icons/go";
+import { RiMailAddLine } from "react-icons/ri";
 import SimpleMDE from "react-simplemde-editor";
 
 import { createIssueSchema } from "@src/utils/zod.validation";
+import ErrorMessage from "../ErrorMessage";
 
 import "easymde/dist/easymde.min.css";
 
@@ -18,6 +20,7 @@ type IssueForm = z.infer<typeof createIssueSchema>;
 
 const IssueForm = function () {
 	// const [state, formAction] = useFormState(createIssue, null);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState("");
 	const router = useRouter();
 	const {
@@ -31,10 +34,13 @@ const IssueForm = function () {
 
 	const submitIssue = async function (data: IssueForm) {
 		try {
+			setIsSubmitting(true);
 			await axios.post("/api/issues", data);
 			router.push("/issues");
 		} catch (error) {
 			setError("An unexepted error occurred");
+		} finally {
+			setIsSubmitting(false);
 		}
 	};
 
@@ -54,11 +60,7 @@ const IssueForm = function () {
 						<GoIssueOpened height="16" width="16" />
 					</TextField.Slot>
 				</TextField.Root>
-				{errors.title && (
-					<Text color="red" as="p">
-						{errors.title.message}
-					</Text>
-				)}
+				<ErrorMessage>{errors.title?.message}</ErrorMessage>
 				<Controller
 					name="description"
 					control={control}
@@ -66,13 +68,14 @@ const IssueForm = function () {
 						<SimpleMDE placeholder="Describe the issue" {...field} />
 					)}
 				/>
-				{errors.title && (
-					<Text color="red" as="p">
-						{errors.title.message}
-					</Text>
-				)}
+				<ErrorMessage>{errors.description?.message}</ErrorMessage>
 
-				<Button type="submit">Submit new Issue</Button>
+				<Button type="submit" disabled={isSubmitting}>
+					<Spinner loading={isSubmitting}>
+						<RiMailAddLine />
+					</Spinner>
+					Submit new Issue
+				</Button>
 			</form>
 		</div>
 	);
