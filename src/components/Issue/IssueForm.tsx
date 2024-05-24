@@ -15,6 +15,7 @@ import { createIssueSchema } from "@src/utils/zod.validation";
 import ErrorMessage from "../ErrorMessage";
 
 import "easymde/dist/easymde.min.css";
+import { revalidatePath } from "next/cache";
 
 type IssueForm = z.infer<typeof createIssueSchema>;
 
@@ -36,6 +37,7 @@ const IssueForm = function () {
 		try {
 			setIsSubmitting(true);
 			await axios.post("/api/issues", data);
+			// revalidatePath("/issues");
 			router.push("/issues");
 		} catch (error) {
 			setError("An unexepted error occurred");
