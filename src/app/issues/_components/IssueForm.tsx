@@ -3,11 +3,11 @@
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { z } from "zod";
-import { createIssueSchema } from "@src/utils/zod.validation";
+import { IssueSchema } from "@src/utils/zod.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button, Callout, Spinner, TextField } from "@radix-ui/themes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { GoIssueOpened } from "react-icons/go";
 import { RiMailAddLine } from "react-icons/ri";
@@ -15,13 +15,14 @@ import { ErrorMessage } from "@src/components";
 // import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import dynamic from "next/dynamic";
+import { Issue } from "@prisma/client";
+
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
 	ssr: false,
 });
 
-type IssueForm = z.infer<typeof createIssueSchema>;
-
-const IssueForm = function () {
+type IssueFormData = z.infer<typeof IssueSchema>;
+const IssueForm = function ({ issue }: { issue?: Issue }) {
 	// const [state, formAction] = useFormState(createIssue, null);
 	// console.log(window.location);
 
@@ -31,13 +32,22 @@ const IssueForm = function () {
 	const {
 		register,
 		control,
+		reset,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<IssueForm>({
-		resolver: zodResolver(createIssueSchema),
+	} = useForm<IssueFormData>({
+		resolver: zodResolver(IssueSchema),
 	});
+
+	// ! BAD IDEA!!
+	// useEffect(() => {
+	// 	if (issue) {
+	// 		reset(issue);
+	// 	}
+	// }, []);
+
 	// console.log(window);
-	const submitIssue = async function (data: IssueForm) {
+	const submitIssue = async function (data: IssueFormData) {
 		try {
 			setIsSubmitting(true);
 			await axios.post("/api/issues", data);
@@ -61,7 +71,11 @@ const IssueForm = function () {
 				onSubmit={handleSubmit(data => submitIssue(data))}
 				className="space-y-2"
 			>
-				<TextField.Root placeholder="Issue title" {...register("title")}>
+				<TextField.Root
+					placeholder="Issue title"
+					{...register("title")}
+					defaultValue={issue?.title}
+				>
 					<TextField.Slot>
 						<GoIssueOpened height="16" width="16" />
 					</TextField.Slot>
@@ -70,6 +84,7 @@ const IssueForm = function () {
 				<Controller
 					name="description"
 					control={control}
+					defaultValue={issue?.description}
 					render={({ field }) => (
 						<SimpleMDE placeholder="Describe the issue" {...field} />
 					)}

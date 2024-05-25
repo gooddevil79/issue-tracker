@@ -1,9 +1,6 @@
-"use client";
-
-import IssueForm from "@src/app/issues/IssueForm";
+import IssueForm from "../_components/IssueForm";
 
 const NewIssuePage = function () {
-	console.log(window);
 	return (
 		<>
 			<IssueForm />
