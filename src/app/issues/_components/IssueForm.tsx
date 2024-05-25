@@ -48,9 +48,13 @@ const IssueForm = function ({ issue }: { issue?: Issue }) {
 
 	// console.log(window);
 	const submitIssue = async function (data: IssueFormData) {
+		const action = issue
+			? axios.patch(`/api/issues/${issue.id}`, data)
+			: axios.post("/api/issues", data);
+
 		try {
 			setIsSubmitting(true);
-			await axios.post("/api/issues", data);
+			await action;
 			// revalidatePath("/issues");
 			router.push("/issues");
 		} catch (error) {
@@ -95,7 +99,7 @@ const IssueForm = function ({ issue }: { issue?: Issue }) {
 					<Spinner loading={isSubmitting}>
 						<RiMailAddLine />
 					</Spinner>
-					Submit new Issue
+					{issue ? "Update" : "Create"} issue
 				</Button>
 			</form>
 		</div>
