@@ -9,18 +9,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Callout, Spinner, Text, TextField } from "@radix-ui/themes";
 import { GoIssueOpened } from "react-icons/go";
 import { RiMailAddLine } from "react-icons/ri";
-import SimpleMDE from "react-simplemde-editor";
-
 import { createIssueSchema } from "@src/utils/zod.validation";
 import ErrorMessage from "../ErrorMessage";
-
 import "easymde/dist/easymde.min.css";
-import { revalidatePath } from "next/cache";
+// import SimpleMDE from "react-simplemde-editor";
+import dynamic from "next/dynamic";
+const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
+	ssr: false,
+});
 
 type IssueForm = z.infer<typeof createIssueSchema>;
 
 const IssueForm = function () {
 	// const [state, formAction] = useFormState(createIssue, null);
+	// console.log(window.location);
+
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState("");
 	const router = useRouter();
@@ -32,7 +35,7 @@ const IssueForm = function () {
 	} = useForm<IssueForm>({
 		resolver: zodResolver(createIssueSchema),
 	});
-
+	// console.log(window);
 	const submitIssue = async function (data: IssueForm) {
 		try {
 			setIsSubmitting(true);
