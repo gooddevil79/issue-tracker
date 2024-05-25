@@ -21,6 +21,5 @@ const IssuesPage = async function () {
 };
 
 export const dynamic = "force-dynamic";
-// export const revalidate = 60;
 
 export default IssuesPage;

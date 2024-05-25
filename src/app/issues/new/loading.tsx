@@ -1,7 +1,7 @@
-import React from "react";
+import IssueFormSkeleton from "../_components/IssueFormSkeleton";
 
 const LoadingNewIssue = function () {
-	return <div>LoadingNewIssue ...</div>;
+	return <IssueFormSkeleton />;
 };
 
 export default LoadingNewIssue;

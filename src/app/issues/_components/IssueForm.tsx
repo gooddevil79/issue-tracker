@@ -14,12 +14,8 @@ import { RiMailAddLine } from "react-icons/ri";
 import { ErrorMessage } from "@src/components";
 // import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
-import dynamic from "next/dynamic";
 import { Issue } from "@prisma/client";
-
-const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
-	ssr: false,
-});
+import SimpleMDE from "react-simplemde-editor";
 
 type IssueFormData = z.infer<typeof IssueSchema>;
 const IssueForm = function ({ issue }: { issue?: Issue }) {
