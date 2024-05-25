@@ -1,5 +1,6 @@
 "use client";
-import IssueForm from "@src/components/Issue/IssueForm";
+
+import IssueForm from "@src/app/issues/IssueForm";
 
 const NewIssuePage = function () {
 	console.log(window);
