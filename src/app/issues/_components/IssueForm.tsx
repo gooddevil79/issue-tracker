@@ -57,6 +57,7 @@ const IssueForm = function ({ issue }: { issue?: Issue }) {
 			await action;
 			// revalidatePath("/issues");
 			router.push("/issues");
+			router.refresh();
 		} catch (error) {
 			setError("An unexepted error occurred");
 		} finally {
