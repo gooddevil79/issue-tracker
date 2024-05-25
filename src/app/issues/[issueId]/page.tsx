@@ -4,12 +4,15 @@ import { notFound } from "next/navigation";
 import EditIssueButton from "./EditIssueButton";
 import IssueDetails from "./IssueDetails";
 import DeleteIssueButton from "./DeleteIssueButton";
+import delay from "delay";
 
 const IssueDetailsPage = async function ({
 	params: { issueId },
 }: {
 	params: { issueId: string };
 }) {
+	await delay(5000);
+
 	if (typeof issueId !== "string") {
 		notFound();
 	}

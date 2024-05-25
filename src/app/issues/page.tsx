@@ -1,9 +1,8 @@
 import { Button } from "@radix-ui/themes";
 import IssueTable from "@src/app/issues/IssueTable";
 import Link from "next/link";
-import React, { Suspense } from "react";
-
-import TableSkeleton from "@src/app/issues/TableSkeleton";
+import { Suspense } from "react";
+import TableSkeleton from "./TableSkeleton";
 
 const IssuesPage = async function () {
 	return (

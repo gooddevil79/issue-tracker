@@ -42,3 +42,35 @@ export async function PATCH(
 		);
 	}
 }
+
+export async function DELETE(
+	request: NextRequest,
+	{ params: { issueId } }: { params: { issueId: string } }
+) {
+	try {
+		await connectDB();
+
+		const issue = await prisma.issue.findUnique({ where: { id: issueId } });
+
+		if (!issue) {
+			return NextResponse.json({ message: "Not found" }, { status: 400 });
+		}
+
+		await prisma.issue.delete({
+			where: { id: issueId },
+		});
+
+		return NextResponse.json(
+			{ message: "Issue Deleted succesfully" },
+			{ status: 200 }
+		);
+	} catch (error) {
+		return NextResponse.json(
+			{
+				message:
+					"An error occurred: Something goes wrong on the server. Please try later",
+			},
+			{ status: 500 }
+		);
+	}
+}
