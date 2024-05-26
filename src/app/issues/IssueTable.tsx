@@ -5,7 +5,12 @@ import prisma from "@/prisma/client";
 import Link from "../../components/Link";
 
 const IssueTable = async function () {
-	const issues = await prisma.issue.findMany();
+	let issues;
+	try {
+		issues = await prisma.issue.findMany();
+	} catch (error) {
+		return <h1>Faild</h1>;
+	}
 
 	return (
 		<Table.Root variant="surface">
