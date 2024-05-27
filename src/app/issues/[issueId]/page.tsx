@@ -4,14 +4,16 @@ import { notFound } from "next/navigation";
 import EditIssueButton from "./EditIssueButton";
 import IssueDetails from "./IssueDetails";
 import DeleteIssueButton from "./DeleteIssueButton";
-import delay from "delay";
+import { getServerSession } from "next-auth";
+import authOptions from "@src/app/api/auth/[...nextauth]/authOptions";
+import AssigneeSelect from "@src/components/AssigneeSelect";
 
 const IssueDetailsPage = async function ({
 	params: { issueId },
 }: {
 	params: { issueId: string };
 }) {
-	await delay(5000);
+	const session = await getServerSession(authOptions);
 
 	if (typeof issueId !== "string") {
 		notFound();
@@ -22,7 +24,7 @@ const IssueDetailsPage = async function ({
 		issue = await prisma.issue.findUnique({ where: { id: issueId } });
 	} catch (error) {
 		console.log(error);
-		return <h1>Faild</h1>;
+		return <h1>Something went wrong! Please try later</h1>;
 	}
 
 	if (!issue) notFound();
@@ -32,10 +34,13 @@ const IssueDetailsPage = async function ({
 			<Box className="space-y-3 md:col-span-4 ">
 				<IssueDetails issue={issue} />
 			</Box>
-			<Flex gap="2" direction="column">
-				<EditIssueButton issueId={issueId} />
-				<DeleteIssueButton issueId={issueId} />
-			</Flex>
+			{session && (
+				<Flex gap="2" direction="column">
+					<AssigneeSelect />
+					<EditIssueButton issueId={issueId} />
+					<DeleteIssueButton issueId={issueId} />
+				</Flex>
+			)}
 		</Grid>
 	);
 };

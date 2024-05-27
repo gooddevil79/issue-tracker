@@ -1,12 +1,19 @@
 import prisma from "@/prisma/client";
 import { connectDB } from "@src/lib/connectDB";
 import { IssueSchema } from "@src/utils/zod.validation";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
 	request: NextRequest,
 	{ params: { issueId } }: { params: { issueId: string } }
 ) {
+	const session = await getServerSession();
+
+	if (!session) {
+		return NextResponse.json({}, { status: 401 });
+	}
+
 	try {
 		const body = await request.json();
 		const validation = IssueSchema.safeParse(body);
@@ -47,6 +54,11 @@ export async function DELETE(
 	request: NextRequest,
 	{ params: { issueId } }: { params: { issueId: string } }
 ) {
+	const session = await getServerSession();
+
+	if (!session) {
+		return NextResponse.json({}, { status: 401 });
+	}
 	try {
 		await connectDB();
 
