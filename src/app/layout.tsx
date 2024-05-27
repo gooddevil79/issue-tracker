@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@radix-ui/themes/styles.css";
 import "./globals.css";
+import AuthProvider from "@src/context/auth/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,15 +20,17 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={inter.className}>
-				<Theme accentColor="iris" radius="large" scaling="105%">
-					<NavBar />
-					<main className="px-5">
-						<Container>{children}</Container>
-					</main>
-					{/* <ThemePanel /> */}
-				</Theme>
-			</body>
+			<AuthProvider>
+				<body className={inter.className}>
+					<Theme accentColor="iris" radius="large" scaling="105%">
+						<NavBar />
+						<main className="px-5">
+							<Container>{children}</Container>
+						</main>
+						{/* <ThemePanel /> */}
+					</Theme>
+				</body>
+			</AuthProvider>
 		</html>
 	);
 }
