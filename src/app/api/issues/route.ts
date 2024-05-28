@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
 	}
 
 	const body = await request.json();
+	const { title, description, assignedToUserId } = body;
 	const validation = IssueSchema.safeParse(body);
 
 	if (!validation.success) {
@@ -21,10 +22,21 @@ export async function POST(request: NextRequest) {
 		);
 	}
 
+	if (assignedToUserId) {
+		const user = await prisma.issue.findUnique({
+			where: { id: assignedToUserId },
+		});
+		if (!user)
+			return NextResponse.json(
+				{ message: "Could not find user to assign" },
+				{ status: 400 }
+			);
+	}
+
 	try {
 		await connectDB();
 		const newIssue = await prisma.issue.create({
-			data: { title: body.title, description: body.description },
+			data: { title, description, assignedToUserId },
 		});
 		return NextResponse.json(
 			{ message: "Issue created", newIssue },
@@ -32,7 +44,7 @@ export async function POST(request: NextRequest) {
 		);
 	} catch (error) {
 		return NextResponse.json(
-			{ message: "Something went wrong on server!", error },
+			{ message: "Something went wrong on server! Please try later ", error },
 			{ status: 500 }
 		);
 	}

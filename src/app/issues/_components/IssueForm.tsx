@@ -1,21 +1,23 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import axios from "axios";
-import { z } from "zod";
-import { IssueSchema } from "@src/utils/zod.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { IssueSchema } from "@src/utils/zod.validation";
+import axios, { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
+import { z } from "zod";
 
-import { Button, Callout, Spinner, TextField } from "@radix-ui/themes";
-import { useEffect, useState } from "react";
+import { Button, Callout, Flex, Spinner, TextField } from "@radix-ui/themes";
+import { ErrorMessage, Skeleton } from "@src/components";
+import { Suspense, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { GoIssueOpened } from "react-icons/go";
 import { RiMailAddLine } from "react-icons/ri";
-import { ErrorMessage } from "@src/components";
 // import SimpleMDE from "react-simplemde-editor";
-import "easymde/dist/easymde.min.css";
 import { Issue } from "@prisma/client";
+// import AssigneeSelect from "@src/components/AssigneeSelect";
+import "easymde/dist/easymde.min.css";
 import SimpleMDE from "react-simplemde-editor";
+import toast from "react-hot-toast";
 
 type IssueFormData = z.infer<typeof IssueSchema>;
 const IssueForm = function ({ issue }: { issue?: Issue }) {
@@ -50,12 +52,23 @@ const IssueForm = function ({ issue }: { issue?: Issue }) {
 
 		try {
 			setIsSubmitting(true);
-			await action;
+			const {
+				data: { message },
+			} = await action;
+			toast.success(message);
+
 			// revalidatePath("/issues");
 			router.push("/issues");
 			router.refresh();
 		} catch (error) {
 			setError("An unexepted error occurred");
+			if (axios.isAxiosError(error)) {
+				toast.error(
+					error.response?.data?.message || "Could not create issue right now"
+				);
+			} else {
+				throw new Error("different error than axios");
+			}
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -72,15 +85,19 @@ const IssueForm = function ({ issue }: { issue?: Issue }) {
 				onSubmit={handleSubmit(data => submitIssue(data))}
 				className="space-y-2"
 			>
-				<TextField.Root
-					placeholder="Issue title"
-					{...register("title")}
-					defaultValue={issue?.title}
-				>
-					<TextField.Slot>
-						<GoIssueOpened height="16" width="16" />
-					</TextField.Slot>
-				</TextField.Root>
+				<Flex gap="2" align="center">
+					<TextField.Root
+						placeholder="Issue title"
+						{...register("title")}
+						defaultValue={issue?.title}
+						className="flex-1"
+					>
+						<TextField.Slot>
+							<GoIssueOpened height="16" width="16" />
+						</TextField.Slot>
+					</TextField.Root>
+					{/* <AssigneeSelect /> */}
+				</Flex>
 				<ErrorMessage>{errors.title?.message}</ErrorMessage>
 				<Controller
 					name="description"

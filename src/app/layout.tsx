@@ -3,9 +3,10 @@ import NavBar from "@src/components/navbar/NavBar";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@radix-ui/themes/styles.css";
-import "./globals.css";
 import AuthProvider from "@src/context/auth/AuthProvider";
 import QueryClientProvider from "@src/context/react-query/QueryClientProvider";
+import { Toaster } from "react-hot-toast";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,6 +32,7 @@ export default function RootLayout({
 							</main>
 							{/* <ThemePanel /> */}
 						</Theme>
+						<Toaster />
 					</body>
 				</QueryClientProvider>
 			</AuthProvider>

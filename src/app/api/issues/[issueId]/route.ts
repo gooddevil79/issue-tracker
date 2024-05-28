@@ -1,6 +1,6 @@
 import prisma from "@/prisma/client";
 import { connectDB } from "@src/lib/connectDB";
-import { IssueSchema } from "@src/utils/zod.validation";
+import { PatchIssueSchema } from "@src/utils/zod.validation";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -16,7 +16,8 @@ export async function PATCH(
 
 	try {
 		const body = await request.json();
-		const validation = IssueSchema.safeParse(body);
+		const { title, description, assignedToUserId } = body;
+		const validation = PatchIssueSchema.safeParse(body);
 
 		if (!validation.success) {
 			return NextResponse.json(validation?.error?.format(), { status: 400 });
@@ -30,9 +31,20 @@ export async function PATCH(
 			return NextResponse.json({ message: "Not found" }, { status: 400 });
 		}
 
+		if (assignedToUserId) {
+			const user = await prisma.issue.findUnique({
+				where: { id: assignedToUserId },
+			});
+			if (!user)
+				return NextResponse.json(
+					{ message: "Could not find user to assign" },
+					{ status: 400 }
+				);
+		}
+
 		const updatedIssue = await prisma.issue.update({
 			where: { id: issueId },
-			data: { title: body.title, description: body.description },
+			data: { title, description, assignedToUserId },
 		});
 
 		return NextResponse.json(

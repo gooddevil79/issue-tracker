@@ -36,7 +36,7 @@ const IssueDetailsPage = async function ({
 			</Box>
 			{session && (
 				<Flex gap="2" direction="column">
-					<AssigneeSelect />
+					<AssigneeSelect issue={issue} />
 					<EditIssueButton issueId={issueId} />
 					<DeleteIssueButton issueId={issueId} />
 				</Flex>

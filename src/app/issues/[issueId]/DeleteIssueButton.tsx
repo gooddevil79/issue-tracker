@@ -4,6 +4,7 @@ import { AlertDialog, Button, Flex, Spinner } from "@radix-ui/themes";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { AiOutlineDelete } from "react-icons/ai";
 import { PiWarningCircle } from "react-icons/pi";
 
@@ -18,8 +19,14 @@ const DeleteIssueButton = function ({ issueId }: { issueId: string }) {
 			const res = await axios.delete(`/api/issues/${issueId}`);
 			router.push("/issues");
 			router.refresh();
+			toast.success(res.data.message);
 		} catch (error) {
 			setError(true);
+			if (axios.isAxiosError(error)) {
+				toast.error(
+					error.response?.data?.message || "Could not do the action!"
+				);
+			}
 		} finally {
 			setIsDeleting(false);
 		}
