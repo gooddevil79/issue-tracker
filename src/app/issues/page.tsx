@@ -9,7 +9,7 @@ import { Issue, Status } from "@prisma/client";
 const IssuesPage = async function ({
 	searchParams,
 }: {
-	searchParams: { status: Status; orderBy: keyof Issue };
+	searchParams: { status: Status; orderBy: keyof Issue; page: string };
 }) {
 	return (
 		<div>
