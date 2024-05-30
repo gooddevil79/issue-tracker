@@ -20,7 +20,7 @@ const IssueSummary = function ({ open, inProgress, closed }: Props) {
 	return (
 		<Flex gap="2">
 			{containers.map(c => (
-				<Link href={`/issues?status=${c.status}`}>
+				<Link href={`/issues?status=${c.status}`} key={c.status}>
 					<Card>
 						<Text>{c.label}</Text>
 						<Text as="p" className="text-2xl font-semibold">
