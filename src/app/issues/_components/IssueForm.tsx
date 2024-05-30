@@ -56,7 +56,7 @@ const IssueForm = function ({ issue }: { issue?: Issue }) {
 				data: { message },
 			} = await action;
 			toast.success(message);
-
+			axios.get("/api/revalidate?path=/");
 			// revalidatePath("/issues");
 			router.push("/issues");
 			router.refresh();

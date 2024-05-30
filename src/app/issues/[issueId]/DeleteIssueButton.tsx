@@ -17,6 +17,7 @@ const DeleteIssueButton = function ({ issueId }: { issueId: string }) {
 		setIsDeleting(true);
 		try {
 			const res = await axios.delete(`/api/issues/${issueId}`);
+			axios.get("/api/revalidate?path=/");
 			router.push("/issues");
 			router.refresh();
 			toast.success(res.data.message);
