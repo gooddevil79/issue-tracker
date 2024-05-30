@@ -5,6 +5,12 @@ import { Suspense } from "react";
 import TableSkeleton from "./TableSkeleton";
 import IssueStatusSelect from "@src/components/IssueStatusSelect";
 import { Issue, Status } from "@prisma/client";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Issue Tracker | List",
+	description: "View a all project issues",
+};
 
 const IssuesPage = async function ({
 	searchParams,

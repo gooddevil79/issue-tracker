@@ -8,11 +8,20 @@ import { getServerSession } from "next-auth";
 import authOptions from "@src/app/api/auth/[...nextauth]/authOptions";
 import AssigneeSelect from "@src/components/AssigneeSelect";
 
-const IssueDetailsPage = async function ({
-	params: { issueId },
-}: {
+interface Props {
 	params: { issueId: string };
-}) {
+}
+export const generateMetadata = async ({ params }: Props) => {
+	const issue = await prisma.issue.findUnique({
+		where: { id: params.issueId },
+	});
+	return {
+		title: issue?.title,
+		description: "Details of issue " + issue?.title,
+	};
+};
+
+const IssueDetailsPage = async function ({ params: { issueId } }: Props) {
 	const session = await getServerSession(authOptions);
 
 	if (typeof issueId !== "string") {
