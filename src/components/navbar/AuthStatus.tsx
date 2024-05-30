@@ -24,7 +24,7 @@ const AuthStatus = function () {
 							<DropdownMenu.Label>
 								<Text>{session.user!.email}</Text>
 							</DropdownMenu.Label>
-							<DropdownMenu.Item shortcut="⌘ E">
+							<DropdownMenu.Item>
 								<Link href="/api/auth/signout">Logout</Link>
 							</DropdownMenu.Item>
 						</DropdownMenu.Content>
